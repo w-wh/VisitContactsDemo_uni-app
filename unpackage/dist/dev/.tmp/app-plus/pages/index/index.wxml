@@ -1,0 +1,1 @@
+<view class="content"><button style="margin-top:200rpx;" type="primary" data-event-opts="{{[['tap',[['visitContacts']]]]}}" bindtap="__e">访问通讯录</button></view>
