@@ -163,7 +163,7 @@ var nativeCommon = {
         android:{//供android系统调用
             visitContacts:function(callBack){
                 var REQUESTCODE = 1000;
-                main = plus.android.runtimeMainActivity();
+                var main = plus.android.runtimeMainActivity();
                 var Intent = plus.android.importClass('android.content.Intent');
                 var ContactsContract = plus.android.importClass('android.provider.ContactsContract');
                 var intent = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
