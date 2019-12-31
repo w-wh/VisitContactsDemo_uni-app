@@ -22,9 +22,14 @@ var nativeCommon = {
                     }
                     break;
                 case "Android":
-                    nativeCommon.contacts.android.visitContacts(function(name, phoneNumber){
-                        callBack(name, phoneNumber);
-                    });
+					// Android通过plus.contacts.getAddressBook可弹出通讯录授权提示框
+					plus.contacts.getAddressBook(plus.contacts.ADDRESSBOOK_PHONE, function (addressbook) {
+						nativeCommon.contacts.android.visitContacts(function(name, phoneNumber){
+						    callBack(name, phoneNumber);
+						});
+					}, function (e) {
+						plus.nativeUI.alert("Get address book failed: " + e.message);
+					});
                     break;
                 default:
                     break;
