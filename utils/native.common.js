@@ -44,13 +44,18 @@ var nativeCommon = {
                     "contactPicker:didSelectContact:":function(picker, contact){
                         console.log(JSON.stringify(picker));
                         console.log(JSON.stringify(contact));
-                        //姓名
+                        //姓名/公司
                         var name = "";
                         //姓氏
                         var familyName = contact.plusGetAttribute("familyName");
                         //名字
                         var givenName = contact.plusGetAttribute("givenName");
+						//公司
+						var organizationName = contact.plusGetAttribute("organizationName");
                         name = familyName+givenName;
+						if (name.length <= 0) {
+							name = organizationName;
+						}
                         //电话号码
                         var phoneNo = "";
                         var phoneNumbers = contact.plusGetAttribute("phoneNumbers");
@@ -97,13 +102,18 @@ var nativeCommon = {
                         
                         //所以之前的代码不用改
                         var contact = peoplePicker;
-                        //姓名
+                        //姓名/公司
                         var name = "";
                         //姓氏
                         var familyName = contact.plusGetAttribute("familyName");
                         //名字
                         var givenName = contact.plusGetAttribute("givenName");
-                        name = familyName+givenName;
+						//公司
+						var organizationName = contact.plusGetAttribute("organizationName");
+						name = familyName+givenName;
+						if (name.length <= 0) {
+							name = organizationName;
+						}
                         //电话号码
                         var phoneNo = "";
                         var phoneNumbers = contact.plusGetAttribute("phoneNumbers");
