@@ -18,6 +18,12 @@
 						title: name + ' ' + number,
 						icon: 'none'
 					});
+				},function(){
+					console.log('开始加载');
+					uni.showLoading();
+				},function(){
+					console.log('加载完成');
+					uni.hideLoading();
 				});
 			}
 		}

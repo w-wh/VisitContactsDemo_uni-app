@@ -6,19 +6,20 @@ var nativeCommon = {
      * 通讯录模块
      */
     contacts:{
-        getContact:function(callBack){
+        getContact:function(callBack, beginLoad, finishedLoad){
+			if (beginLoad) {beginLoad();}
             switch (plus.os.name){
                 case "iOS":
                     if (plus.device.model === "iPhoneSimulator") {
                         //模拟器
                         nativeCommon.contacts.ios.visitContacts(function(name, phoneNumber){
                             callBack(name, phoneNumber);
-                        });
+                        }, finishedLoad);
                     } else {
                         //真机
                         nativeCommon.contacts.ios.visitAddressBook(function(name, phoneNumber){
                             callBack(name, phoneNumber);
-                        });
+                        }, finishedLoad);
                     }
                     break;
                 case "Android":
@@ -26,8 +27,9 @@ var nativeCommon = {
 					plus.contacts.getAddressBook(plus.contacts.ADDRESSBOOK_PHONE, function (addressbook) {
 						nativeCommon.contacts.android.visitContacts(function(name, phoneNumber){
 						    callBack(name, phoneNumber);
-						});
+						}, finishedLoad);
 					}, function (e) {
+						if (finishedLoad) {finishedLoad();}
 						plus.nativeUI.alert("Get address book failed: " + e.message);
 					});
                     break;
@@ -41,7 +43,7 @@ var nativeCommon = {
              * 仅限模拟器使用（Native.js 的bug）
              * @param {Object} callBack回调
              */
-            visitContacts: function(callBack){
+            visitContacts: function(callBack, finishedLoad){
                 var contactPickerVC = plus.ios.newObject("CNContactPickerViewController");
                 //实现代理方法【- (void)contactPicker:(CNContactPickerViewController *)picker didSelectContact:(CNContact *)contact;】
                 //同时生成遵守CNContactPickerDelegate协议的代理对象delegate
@@ -87,14 +89,16 @@ var nativeCommon = {
 				//获取跟控制器
 				var rootVc = nativeCommon.contacts.ios.getRootViewController();
 				//由跟控制器present到通讯录控制器
-				plus.ios.invoke(rootVc, "presentViewController:animated:completion:", contactPickerVC, true, null);
+				plus.ios.invoke(rootVc, "presentViewController:animated:completion:", contactPickerVC, true, function(){
+					if (finishedLoad) {finishedLoad();}
+				});
             },
             /**
              * 访问通讯录，将获取的联系人信息通过callBack返回
              * 仅限真机使用（Native.js 的bug）
              * @param {Object} callBack
              */
-            visitAddressBook:function(callBack){
+            visitAddressBook:function(callBack, finishedLoad){
                 var peoplePickerNavController = plus.ios.newObject("ABPeoplePickerNavigationController");
                 //实现代理方法【- (void)peoplePickerNavigationController:(ABPeoplePickerNavigationController *)peoplePicker didSelectPerson:(ABRecordRef)person;】
                 //同时生成遵守ABPeoplePickerNavigationControllerDelegate协议的代理对象peoplePickerDelegate
@@ -145,7 +149,9 @@ var nativeCommon = {
 				//获取跟控制器
 				var rootVc = nativeCommon.contacts.ios.getRootViewController();
 				//由跟控制器present到通讯录控制器
-				plus.ios.invoke(rootVc, "presentViewController:animated:completion:", peoplePickerNavController, true, null);
+				plus.ios.invoke(rootVc, "presentViewController:animated:completion:", peoplePickerNavController, true, function(){
+					if (finishedLoad) {finishedLoad();}
+				});
             },
 			/**
 			 * 获取跟控制器
@@ -176,7 +182,7 @@ var nativeCommon = {
             }
         },
         android:{//供android系统调用
-            visitContacts:function(callBack){
+            visitContacts:function(callBack, finishedLoad){
                 var REQUESTCODE = 1000;
                 var main = plus.android.runtimeMainActivity();
                 var Intent = plus.android.importClass('android.content.Intent');
@@ -209,6 +215,7 @@ var nativeCommon = {
                     }
                 };
                 main.startActivityForResult(intent, REQUESTCODE);
+				if (finishedLoad) {finishedLoad();}
             }
         }
     }
